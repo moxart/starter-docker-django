@@ -1,0 +1,21 @@
+# Editor
+.vscode
+.idea
+
+# Git
+.git
+.gitignore
+
+# Docker
+docker-compose.yml
+Dockerfile
+.docker
+.dockerignore
+
+# Python
+__pycache__
+
+# Virtual environment
+.env
+.venv/
+venv/

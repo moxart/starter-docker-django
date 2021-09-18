@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  django:
+    build: .
+    container_name: django_app_dev
+    restart: always
+    volumes:
+      - ./django:/django
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=devsecretkey
+      - DEBUG=1
+      - DB_HOST=db
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - DB_PORT=5432
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13-alpine
+    container_name: django_postgres_dev
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
