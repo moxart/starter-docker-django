@@ -1,6 +1,41 @@
 version: '3.9'
 
 services:
+
+  # Postgresql
+  db:
+    image: postgres:13-alpine
+    container_name: django_postgres_dev
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=
+    ports:
+      - "5432:5432"
+
+  # Redis
+  redis:
+    image: redis:alpine
+    container_name: django_redis_dev
+
+  # Celery
+  celery:
+    build:
+      context: .
+    container_name: django_celery_dev
+    restart: always
+    command: celery -A core worker -l DEBUG
+    volumes:
+      - ./django:/django
+    depends_on:
+      - db
+      - redis
+      - django
+
+  # Django App
   django:
     build: .
     container_name: django_app_dev
@@ -20,14 +55,3 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     depends_on:
       - db
-
-  db:
-    image: postgres:13-alpine
-    container_name: django_postgres_dev
-    restart: always
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
